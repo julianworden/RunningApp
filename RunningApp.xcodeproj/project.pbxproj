@@ -13,6 +13,8 @@
 		AB1BF488287A3744007EE09E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AB1BF486287A3744007EE09E /* Main.storyboard */; };
 		AB1BF48A287A3744007EE09E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB1BF489287A3744007EE09E /* Assets.xcassets */; };
 		AB1BF48D287A3744007EE09E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AB1BF48B287A3744007EE09E /* LaunchScreen.storyboard */; };
+		AB1BF495287A3907007EE09E /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1BF494287A3907007EE09E /* LocationService.swift */; };
+		AB1BF498287A3B15007EE09E /* UserLocationUpdatedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1BF497287A3B14007EE09E /* UserLocationUpdatedDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		AB1BF489287A3744007EE09E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AB1BF48C287A3744007EE09E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AB1BF48E287A3744007EE09E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AB1BF494287A3907007EE09E /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		AB1BF497287A3B14007EE09E /* UserLocationUpdatedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocationUpdatedDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,13 +62,39 @@
 			children = (
 				AB1BF480287A3744007EE09E /* AppDelegate.swift */,
 				AB1BF482287A3744007EE09E /* SceneDelegate.swift */,
-				AB1BF484287A3744007EE09E /* ViewController.swift */,
+				AB1BF49B287A3CC7007EE09E /* Controllers */,
+				AB1BF49A287A3CC1007EE09E /* Services */,
+				AB1BF499287A3CBC007EE09E /* Protocols */,
 				AB1BF486287A3744007EE09E /* Main.storyboard */,
 				AB1BF489287A3744007EE09E /* Assets.xcassets */,
 				AB1BF48B287A3744007EE09E /* LaunchScreen.storyboard */,
 				AB1BF48E287A3744007EE09E /* Info.plist */,
 			);
 			path = RunningApp;
+			sourceTree = "<group>";
+		};
+		AB1BF499287A3CBC007EE09E /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				AB1BF497287A3B14007EE09E /* UserLocationUpdatedDelegate.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		AB1BF49A287A3CC1007EE09E /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				AB1BF494287A3907007EE09E /* LocationService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		AB1BF49B287A3CC7007EE09E /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				AB1BF484287A3744007EE09E /* ViewController.swift */,
+			);
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -77,6 +107,7 @@
 				AB1BF479287A3744007EE09E /* Sources */,
 				AB1BF47A287A3744007EE09E /* Frameworks */,
 				AB1BF47B287A3744007EE09E /* Resources */,
+				AB1BF496287A3A4D007EE09E /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -133,13 +164,36 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		AB1BF496287A3A4D007EE09E /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if test -d \"/opt/homebrew/bin/\"; then\n  PATH=\"/opt/homebrew/bin/:${PATH}\"\nfi\n\nexport PATH\n\nif which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		AB1BF479287A3744007EE09E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				AB1BF485287A3744007EE09E /* ViewController.swift in Sources */,
+				AB1BF498287A3B15007EE09E /* UserLocationUpdatedDelegate.swift in Sources */,
 				AB1BF481287A3744007EE09E /* AppDelegate.swift in Sources */,
+				AB1BF495287A3907007EE09E /* LocationService.swift in Sources */,
 				AB1BF483287A3744007EE09E /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

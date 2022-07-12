@@ -5,6 +5,8 @@
 //  Created by Julian Worden on 7/9/22.
 //
 
+// swiftlint:disable all
+
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
