@@ -17,7 +17,7 @@ class LocationService: NSObject, CLLocationManagerDelegate {
     override init() {
         super.init()
         locationManager.delegate = self
-        locationManager.distanceFilter = 50
+        locationManager.distanceFilter = 1
         locationManager.startUpdatingLocation()
         currentUserCoordinates = locationManager.location?.coordinate
     }
