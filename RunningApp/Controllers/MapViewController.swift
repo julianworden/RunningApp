@@ -45,7 +45,9 @@ class MapViewController: UIViewController {
 
         unitOfMeasurementSelector.insertSegment(withTitle: "Miles", at: 0, animated: true)
         unitOfMeasurementSelector.insertSegment(withTitle: "Kilometers", at: 1, animated: true)
+        unitOfMeasurementSelector.selectedSegmentIndex = 0
 
+        totalDistanceTraveledLabel.isHidden = true
         totalDistanceTraveledLabel.font = UIFont(name: "Avenir Heavy", size: 22)
 
         startStopButtonStack.axis = .horizontal
@@ -74,6 +76,7 @@ class MapViewController: UIViewController {
         infoView.translatesAutoresizingMaskIntoConstraints = false
         centerButton.translatesAutoresizingMaskIntoConstraints = false
         unitOfMeasurementSelector.translatesAutoresizingMaskIntoConstraints = false
+        totalDistanceTraveledLabel.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
             mapView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -103,24 +106,22 @@ class MapViewController: UIViewController {
             infoView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             infoView.heightAnchor.constraint(equalToConstant: view.frame.size.height / 3)
 
-//            centerButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//            centerButton.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
 
     func configureSubscribers() {
         subscribers = [
             viewModel.$mapViewShowsUserLocation.assign(to: \.showsUserLocation, on: mapView),
-            viewModel.$mapViewRegion.sink(receiveValue: { region in
-                self.mapView.setRegion(region!, animated: true)
-                self.polylineSubscriber = self.viewModel.$mapViewPolyline.sink(receiveValue: { polyline in
-                    self.mapView.addOverlay(polyline)
+            viewModel.$mapViewRegion.sink(receiveValue: { [weak self] region in
+                self?.mapView.setRegion(region!, animated: true)
+                self?.polylineSubscriber = self?.viewModel.$mapViewPolyline.sink(receiveValue: { polyline in
+                    self?.mapView.addOverlay(polyline)
                 })
             }),
             viewModel.$totalDistanceTravelled
                 .map { String($0) }
-                .sink(receiveValue: { distance in
-                    self.totalDistanceTraveledLabel.text = "DISTANCE: \(distance)"
+                .sink(receiveValue: { [weak self] distance in
+                    self?.totalDistanceTraveledLabel.text = "Distance: \(distance)"
                 })
         ]
     }
@@ -129,6 +130,9 @@ class MapViewController: UIViewController {
         viewModel.startRun()
         startRunButton.isEnabled = false
         endRunButton.isEnabled = true
+        totalDistanceTraveledLabel.isHidden = false
+        viewModel.userCoordinatesArray.removeAll()
+        viewModel.userLocationsArray.removeAll()
         mapView.removeOverlays(mapView.overlays)
     }
 
@@ -137,7 +141,7 @@ class MapViewController: UIViewController {
         endRunButton.isEnabled = false
         startRunButton.isEnabled = true
         mapView.setVisibleMapRect(viewModel.mapViewPolyline.boundingMapRect,
-                                  edgePadding: UIEdgeInsets(top: 50, left: 50, bottom: 100, right: 50),
+                                  edgePadding: UIEdgeInsets(top: 50, left: 50, bottom: infoView.frame.size.height, right: 50),
                                   animated: true)
     }
 

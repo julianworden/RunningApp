@@ -13,9 +13,10 @@ final class MapViewModel: NSObject {
     @Published var mapViewShowsUserLocation = false
     @Published var mapViewRegion: MKCoordinateRegion?
     @Published var mapViewPolyline = MKPolyline()
-    @Published var totalDistanceTravelled = "0.0"
+    @Published var totalDistanceTravelled = ""
 
     var selectedLengthUnit = UnitLength.miles
+    var selectedLengthUnitAbbreviation: String?
     var stopDrawingPolyline = true
     var centeredOnPolyline = false
 
@@ -36,12 +37,12 @@ final class MapViewModel: NSObject {
     var userLocationsArray = [CLLocation]()
 
     func startRun() {
-        startingLocation = userLocationsArray[0]
         userCoordinatesArray.removeAll()
         userLocationsArray.removeAll()
         LocationService.instance.locationManager.startUpdatingLocation()
         stopDrawingPolyline = false
         centeredOnPolyline = false
+        startingLocation = LocationService.instance.locationManager.location
     }
 
     func endRun() {
@@ -49,10 +50,9 @@ final class MapViewModel: NSObject {
         totalDistanceTravelled = "0.0"
         startingLocation = nil
         endingLocation = nil
-        endingLocation = userLocationsArray[0]
+        endingLocation = LocationService.instance.locationManager.location
         stopDrawingPolyline = true
         centeredOnPolyline = true
-//        userCoordinatesArray.removeAll()
     }
 
     func getTotalDistanceTravelled() {
