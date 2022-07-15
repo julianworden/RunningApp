@@ -13,20 +13,67 @@ final class MapViewModel: NSObject {
     @Published var mapViewShowsUserLocation = false
     @Published var mapViewRegion: MKCoordinateRegion?
     @Published var mapViewPolyline = MKPolyline()
+    @Published var totalDistanceTravelled = "0.0"
 
-    var startingLocation: CLLocation?
-    var endingLocation: CLLocation?
-    var totalDistanceTraveled: String {
-        guard let endingLocation = endingLocation else { return ""  }
-        return endingLocation.distance(from: startingLocation!).formatted()
+    var selectedLengthUnit = UnitLength.miles
+    var stopDrawingPolyline = true
+    var centeredOnPolyline = false
+
+    var startingLocation: CLLocation? {
+        didSet {
+            getTotalDistanceTravelled()
+        }
     }
+    var endingLocation: CLLocation?
 
     var userCoordinatesArray = [CLLocationCoordinate2D]() {
         didSet {
-            drawPolyline()
+            if !stopDrawingPolyline && startingLocation != nil {
+                drawPolyline()
+            }
         }
     }
     var userLocationsArray = [CLLocation]()
+
+    func startRun() {
+        startingLocation = userLocationsArray[0]
+        userCoordinatesArray.removeAll()
+        userLocationsArray.removeAll()
+        LocationService.instance.locationManager.startUpdatingLocation()
+        stopDrawingPolyline = false
+        centeredOnPolyline = false
+    }
+
+    func endRun() {
+        guard startingLocation != nil else { return }
+        totalDistanceTravelled = "0.0"
+        startingLocation = nil
+        endingLocation = nil
+        endingLocation = userLocationsArray[0]
+        stopDrawingPolyline = true
+        centeredOnPolyline = true
+//        userCoordinatesArray.removeAll()
+    }
+
+    func getTotalDistanceTravelled() {
+        guard let currentUserLocation = LocationService.instance.locationManager.location,
+              let startingLocation = startingLocation else { return }
+
+        let distanceInMeters = Measurement(value: currentUserLocation.distance(from: startingLocation),
+                                           unit: UnitLength.meters)
+        let formatter = MeasurementFormatter()
+
+        switch selectedLengthUnit {
+        case .miles:
+            let distanceInMiles = distanceInMeters.converted(to: UnitLength.miles)
+            totalDistanceTravelled = formatter.string(from: distanceInMiles)
+        case .kilometers:
+            let distanceInKilometers = distanceInMeters.converted(to: UnitLength.kilometers)
+            totalDistanceTravelled = formatter.string(from: distanceInKilometers)
+        default:
+            return
+        }
+    }
 }
 
 // swiftlint:disable force_cast
@@ -62,8 +109,14 @@ extension MapViewModel: MKMapViewDelegate {
 
 extension MapViewModel: UserLocationUpdatedDelegate {
     func userLocationUpdated(toLocation location: CLLocation) {
-        centerMapOnUserCoordinates(withCoordinates: location.coordinate)
-        userCoordinatesArray.insert(location.coordinate, at: 0)
+        if !centeredOnPolyline {
+            centerMapOnUserCoordinates(withCoordinates: location.coordinate)
+        }
+
+        if !stopDrawingPolyline {
+            userCoordinatesArray.insert(location.coordinate, at: 0)
+        }
         userLocationsArray.insert(location, at: 0)
+        getTotalDistanceTravelled()
     }
 }
