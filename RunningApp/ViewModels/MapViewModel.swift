@@ -15,8 +15,7 @@ final class MapViewModel: NSObject {
     @Published var mapViewPolyline = MKPolyline()
     @Published var totalDistanceTravelled = ""
 
-    var selectedLengthUnit = UnitLength.miles
-    var selectedLengthUnitAbbreviation: String?
+    var selectedLengthUnit = UnitLength.kilometers
     var stopDrawingPolyline = true
     var centeredOnPolyline = false
 
@@ -39,6 +38,7 @@ final class MapViewModel: NSObject {
     func startRun() {
         userCoordinatesArray.removeAll()
         userLocationsArray.removeAll()
+        totalDistanceTravelled = "0.0"
         LocationService.instance.locationManager.startUpdatingLocation()
         stopDrawingPolyline = false
         centeredOnPolyline = false
@@ -47,7 +47,6 @@ final class MapViewModel: NSObject {
 
     func endRun() {
         guard startingLocation != nil else { return }
-        totalDistanceTravelled = "0.0"
         startingLocation = nil
         endingLocation = nil
         endingLocation = LocationService.instance.locationManager.location
@@ -62,6 +61,8 @@ final class MapViewModel: NSObject {
         let distanceInMeters = Measurement(value: currentUserLocation.distance(from: startingLocation),
                                            unit: UnitLength.meters)
         let formatter = MeasurementFormatter()
+        formatter.unitOptions = .providedUnit
+        formatter.numberFormatter.maximumFractionDigits = 2
 
         switch selectedLengthUnit {
         case .miles:
@@ -117,6 +118,7 @@ extension MapViewModel: UserLocationUpdatedDelegate {
             userCoordinatesArray.insert(location.coordinate, at: 0)
         }
         userLocationsArray.insert(location, at: 0)
+
         getTotalDistanceTravelled()
     }
 }
