@@ -5,6 +5,8 @@
 //  Created by Julian Worden on 7/9/22.
 //
 
+// swiftlint:disable all
+
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -16,7 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
 
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = ViewController()
+        window?.rootViewController = MapViewController()
         window?.makeKeyAndVisible()
     }
 

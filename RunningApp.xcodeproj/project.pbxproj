@@ -9,21 +9,37 @@
 /* Begin PBXBuildFile section */
 		AB1BF481287A3744007EE09E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1BF480287A3744007EE09E /* AppDelegate.swift */; };
 		AB1BF483287A3744007EE09E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1BF482287A3744007EE09E /* SceneDelegate.swift */; };
-		AB1BF485287A3744007EE09E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1BF484287A3744007EE09E /* ViewController.swift */; };
+		AB1BF485287A3744007EE09E /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1BF484287A3744007EE09E /* MapViewController.swift */; };
 		AB1BF488287A3744007EE09E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AB1BF486287A3744007EE09E /* Main.storyboard */; };
 		AB1BF48A287A3744007EE09E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AB1BF489287A3744007EE09E /* Assets.xcassets */; };
 		AB1BF48D287A3744007EE09E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AB1BF48B287A3744007EE09E /* LaunchScreen.storyboard */; };
+		AB1BF495287A3907007EE09E /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1BF494287A3907007EE09E /* LocationService.swift */; };
+		AB1BF498287A3B15007EE09E /* UserLocationUpdatedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB1BF497287A3B14007EE09E /* UserLocationUpdatedDelegate.swift */; };
+		AB39642728839432003B6486 /* MapViewModel+MKMapViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB39642628839432003B6486 /* MapViewModel+MKMapViewDelegate.swift */; };
+		AB39642928839459003B6486 /* MapViewModel+UserLocationUpdatedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB39642828839459003B6486 /* MapViewModel+UserLocationUpdatedDelegate.swift */; };
+		AB39642B28839A6D003B6486 /* UserApprovedLocationTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB39642A28839A6D003B6486 /* UserApprovedLocationTrackingDelegate.swift */; };
+		AB7E040228832E68001C8553 /* UIView+screenshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB7E040128832E68001C8553 /* UIView+screenshot.swift */; };
+		AB88997C287F7664005F7F66 /* MapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB88997B287F7664005F7F66 /* MapViewModel.swift */; };
+		ABF87087288477E4009833AA /* UserDeniedLocationTrackingDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABF87086288477E4009833AA /* UserDeniedLocationTrackingDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		AB1BF47D287A3744007EE09E /* RunningApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RunningApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB1BF480287A3744007EE09E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AB1BF482287A3744007EE09E /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		AB1BF484287A3744007EE09E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		AB1BF484287A3744007EE09E /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		AB1BF487287A3744007EE09E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		AB1BF489287A3744007EE09E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AB1BF48C287A3744007EE09E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AB1BF48E287A3744007EE09E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AB1BF494287A3907007EE09E /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		AB1BF497287A3B14007EE09E /* UserLocationUpdatedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocationUpdatedDelegate.swift; sourceTree = "<group>"; };
+		AB39642628839432003B6486 /* MapViewModel+MKMapViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MapViewModel+MKMapViewDelegate.swift"; sourceTree = "<group>"; };
+		AB39642828839459003B6486 /* MapViewModel+UserLocationUpdatedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MapViewModel+UserLocationUpdatedDelegate.swift"; sourceTree = "<group>"; };
+		AB39642A28839A6D003B6486 /* UserApprovedLocationTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserApprovedLocationTrackingDelegate.swift; sourceTree = "<group>"; };
+		AB7E040128832E68001C8553 /* UIView+screenshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+screenshot.swift"; sourceTree = "<group>"; };
+		AB88997B287F7664005F7F66 /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
+		ABF87086288477E4009833AA /* UserDeniedLocationTrackingDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDeniedLocationTrackingDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,13 +74,61 @@
 			children = (
 				AB1BF480287A3744007EE09E /* AppDelegate.swift */,
 				AB1BF482287A3744007EE09E /* SceneDelegate.swift */,
-				AB1BF484287A3744007EE09E /* ViewController.swift */,
+				AB1BF49B287A3CC7007EE09E /* Views */,
+				AB7E040428832E89001C8553 /* ViewModels */,
+				AB1BF49A287A3CC1007EE09E /* Services */,
+				AB1BF499287A3CBC007EE09E /* Protocols */,
+				AB7E040328832E6F001C8553 /* Extensions */,
 				AB1BF486287A3744007EE09E /* Main.storyboard */,
-				AB1BF489287A3744007EE09E /* Assets.xcassets */,
 				AB1BF48B287A3744007EE09E /* LaunchScreen.storyboard */,
+				AB1BF489287A3744007EE09E /* Assets.xcassets */,
 				AB1BF48E287A3744007EE09E /* Info.plist */,
 			);
 			path = RunningApp;
+			sourceTree = "<group>";
+		};
+		AB1BF499287A3CBC007EE09E /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				AB1BF497287A3B14007EE09E /* UserLocationUpdatedDelegate.swift */,
+				AB39642A28839A6D003B6486 /* UserApprovedLocationTrackingDelegate.swift */,
+				ABF87086288477E4009833AA /* UserDeniedLocationTrackingDelegate.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		AB1BF49A287A3CC1007EE09E /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				AB1BF494287A3907007EE09E /* LocationService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		AB1BF49B287A3CC7007EE09E /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AB1BF484287A3744007EE09E /* MapViewController.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		AB7E040328832E6F001C8553 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				AB7E040128832E68001C8553 /* UIView+screenshot.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		AB7E040428832E89001C8553 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				AB88997B287F7664005F7F66 /* MapViewModel.swift */,
+				AB39642628839432003B6486 /* MapViewModel+MKMapViewDelegate.swift */,
+				AB39642828839459003B6486 /* MapViewModel+UserLocationUpdatedDelegate.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -77,6 +141,7 @@
 				AB1BF479287A3744007EE09E /* Sources */,
 				AB1BF47A287A3744007EE09E /* Frameworks */,
 				AB1BF47B287A3744007EE09E /* Resources */,
+				AB1BF496287A3A4D007EE09E /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -133,14 +198,43 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		AB1BF496287A3A4D007EE09E /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if test -d \"/opt/homebrew/bin/\"; then\n  PATH=\"/opt/homebrew/bin/:${PATH}\"\nfi\n\nexport PATH\n\nif which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		AB1BF479287A3744007EE09E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AB1BF485287A3744007EE09E /* ViewController.swift in Sources */,
+				AB39642728839432003B6486 /* MapViewModel+MKMapViewDelegate.swift in Sources */,
+				AB1BF485287A3744007EE09E /* MapViewController.swift in Sources */,
+				AB39642B28839A6D003B6486 /* UserApprovedLocationTrackingDelegate.swift in Sources */,
+				AB1BF498287A3B15007EE09E /* UserLocationUpdatedDelegate.swift in Sources */,
 				AB1BF481287A3744007EE09E /* AppDelegate.swift in Sources */,
+				ABF87087288477E4009833AA /* UserDeniedLocationTrackingDelegate.swift in Sources */,
+				AB1BF495287A3907007EE09E /* LocationService.swift in Sources */,
+				AB39642928839459003B6486 /* MapViewModel+UserLocationUpdatedDelegate.swift in Sources */,
+				AB7E040228832E68001C8553 /* UIView+screenshot.swift in Sources */,
 				AB1BF483287A3744007EE09E /* SceneDelegate.swift in Sources */,
+				AB88997C287F7664005F7F66 /* MapViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
