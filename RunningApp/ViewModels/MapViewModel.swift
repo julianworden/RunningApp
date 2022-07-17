@@ -15,7 +15,9 @@ final class MapViewModel: NSObject {
     @Published var mapViewPolyline = MKPolyline()
     @Published var totalDistanceTravelled = ""
 
-    var selectedLengthUnit = UnitLength.kilometers
+    let locationService = LocationService.instance
+
+    var selectedLengthUnit = UnitLength.miles
     var stopDrawingPolyline = true
     var centeredOnPolyline = false
 
@@ -36,26 +38,27 @@ final class MapViewModel: NSObject {
     var userLocationsArray = [CLLocation]()
 
     func startRun() {
+        mapViewPolyline = MKPolyline()
         userCoordinatesArray.removeAll()
         userLocationsArray.removeAll()
         totalDistanceTravelled = "0.0"
-        LocationService.instance.locationManager.startUpdatingLocation()
         stopDrawingPolyline = false
         centeredOnPolyline = false
-        startingLocation = LocationService.instance.locationManager.location
+        startingLocation = locationService.currentUserLocation
     }
 
     func endRun() {
-        guard startingLocation != nil else { return }
-        startingLocation = nil
-        endingLocation = nil
-        endingLocation = LocationService.instance.locationManager.location
         stopDrawingPolyline = true
         centeredOnPolyline = true
+        startingLocation = nil
+        endingLocation = locationService.currentUserLocation
     }
 
+    // Updates totalDistanceTravelled value while run is ongoing,
+    // stops updating when the run is ended and the startingLocation is
+    // set to nil
     func getTotalDistanceTravelled() {
-        guard let currentUserLocation = LocationService.instance.locationManager.location,
+        guard let currentUserLocation = locationService.currentUserLocation,
               let startingLocation = startingLocation else { return }
 
         let distanceInMeters = Measurement(value: currentUserLocation.distance(from: startingLocation),
@@ -74,51 +77,5 @@ final class MapViewModel: NSObject {
         default:
             return
         }
-    }
-}
-
-// swiftlint:disable force_cast
-extension MapViewModel: MKMapViewDelegate {
-    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-        let routeRenderer = MKPolylineRenderer(overlay: overlay as! MKPolyline)
-        routeRenderer.lineWidth = 5
-        routeRenderer.strokeColor = .systemBlue
-        return routeRenderer
-    }
-
-    func checkLocationAuthorizationStatus() {
-        switch LocationService.instance.locationManager.authorizationStatus {
-        case .authorizedAlways, .authorizedWhenInUse:
-            LocationService.instance.userLocationUpdatedDelegate = self
-            mapViewShowsUserLocation = true
-            centerMapOnUserCoordinates(withCoordinates: LocationService.instance.currentUserCoordinates!)
-        default:
-            LocationService.instance.locationManager.requestWhenInUseAuthorization()
-        }
-    }
-
-    func centerMapOnUserCoordinates(withCoordinates coordinates: CLLocationCoordinate2D) {
-        let region = MKCoordinateRegion(center: coordinates, latitudinalMeters: 500, longitudinalMeters: 500)
-        mapViewRegion = region
-    }
-
-    func drawPolyline() {
-        let polyLine = MKPolyline(coordinates: userCoordinatesArray, count: userCoordinatesArray.count)
-        mapViewPolyline = polyLine
-    }
-}
-
-extension MapViewModel: UserLocationUpdatedDelegate {
-    func userLocationUpdated(toLocation location: CLLocation) {
-        if !centeredOnPolyline {
-            centerMapOnUserCoordinates(withCoordinates: location.coordinate)
-        }
-
-        if !stopDrawingPolyline {
-            userCoordinatesArray.insert(location.coordinate, at: 0)
-        }
-        userLocationsArray.insert(location, at: 0)
-
-        getTotalDistanceTravelled()
     }
 }

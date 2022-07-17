@@ -9,25 +9,38 @@ import CoreLocation
 import Foundation
 
 class LocationService: NSObject, CLLocationManagerDelegate {
+    enum LocationTrackingError: Error, LocalizedError {
+        case trackingPermissionDenied
+    }
+
     static let instance = LocationService()
     let locationManager = CLLocationManager()
     var currentUserCoordinates: CLLocationCoordinate2D?
     var userLocationUpdatedDelegate: UserLocationUpdatedDelegate?
+    var userApprovedLocationTrackingDelegate: UserApprovedLocationTrackingDelegate?
+    var userDeniedLocationTrackingDelegate: UserDeniedLocationTrackingDelegate?
+
+    var currentUserLocation: CLLocation? {
+        locationManager.location
+    }
 
     override init() {
         super.init()
         locationManager.delegate = self
         locationManager.distanceFilter = 1
-        locationManager.startUpdatingLocation()
-        currentUserCoordinates = locationManager.location?.coordinate
+        locationManager.requestWhenInUseAuthorization()
     }
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch manager.authorizationStatus {
         case .authorizedWhenInUse, .authorizedAlways:
-            break
+            locationManager.startUpdatingLocation()
+            currentUserCoordinates = locationManager.location?.coordinate
+            userApprovedLocationTrackingDelegate?.userApprovedLocationTracking()
+        case .denied, .restricted:
+            userDeniedLocationTrackingDelegate?.presentLocationTrackingFailedError(withError: LocationTrackingError.trackingPermissionDenied)
         default:
-            locationManager.requestWhenInUseAuthorization()
+            break
         }
     }
 
@@ -36,6 +49,6 @@ class LocationService: NSObject, CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print(error)
+        userDeniedLocationTrackingDelegate?.presentLocationTrackingFailedError(withError: error)
     }
 }

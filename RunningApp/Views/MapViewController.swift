@@ -5,14 +5,34 @@
 //  Created by Julian Worden on 7/9/22.
 //
 
+// Hi Nate! This is my first time using a State enum for tracking states,
+// Combine, and MVVM. I'd love to hear how I did and whether or not
+// there are any best practices you'd recommend I adhere to. Thanks!
+
+// NOTE: When running this app on Simulator, it will crash the first
+// time location tracking is approved. This crash does not occur on a
+// real device. This occurs because the viewModel.showUserLocationOnMap() method
+// attempts to access the currentUserCoordinates property in locationService before
+// it is set by the locationManagerDidChangeAuthorization CLLocationManagerDelegate
+// method. That's because the CLLocationManagerDelegate methods aren't run when
+// expected in Simulator, but they are run as expected on a real device.
+
 import Combine
 import MapKit
 import UIKit
 
 class MapViewController: UIViewController {
+    enum State {
+        case loaded
+        case runStarted
+        case runEnded
+        case error
+    }
+
     let viewModel = MapViewModel()
     var subscribers = Set<AnyCancellable>()
     var polylineSubscriber: AnyCancellable?
+    var locationService = LocationService.instance
 
     let screenshot = UIImageView()
     let mapView = MKMapView()
@@ -27,19 +47,33 @@ class MapViewController: UIViewController {
     let startRunButton = UIButton(configuration: .borderedProminent())
     let endRunButton = UIButton(configuration: .borderedProminent())
 
+    var state = State.loaded {
+        didSet {
+            switch state {
+            case .loaded:
+                configureLoadedUI()
+            case .runStarted:
+                configureRunStartedUI()
+            case .runEnded:
+                configureRunEndedUI()
+            case .error:
+                configureErrorUI()
+            }
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .white
-
-        configureViews()
-        layoutViews()
-        viewModel.checkLocationAuthorizationStatus()
-        configureSubscribers()
+        locationService.userApprovedLocationTrackingDelegate = self
+        locationService.userDeniedLocationTrackingDelegate = self
     }
 
-    func configureViews() {
+    func configurePersistentViewProperties() {
         mapView.delegate = viewModel
+
+        view.backgroundColor = .white
 
         infoView.backgroundColor = .white
         infoView.layer.shadowColor = UIColor.black.cgColor
@@ -51,7 +85,6 @@ class MapViewController: UIViewController {
         centerUserLocationButton.setImage(UIImage(systemName: "location"), for: .normal)
         centerUserLocationButton.addTarget(self, action: #selector(centerUserLocationButtonTapped), for: .touchUpInside)
 
-        shareButton.isEnabled = false
         shareButton.setImage(UIImage(systemName: "square.and.arrow.up"), for: .normal)
         shareButton.addTarget(self, action: #selector(shareButtonTapped), for: .touchUpInside)
 
@@ -71,9 +104,8 @@ class MapViewController: UIViewController {
         }
         unitOfMeasurementSelector.insertSegment(action: milesAction, at: 0, animated: true)
         unitOfMeasurementSelector.insertSegment(action: kilometersAction, at: 1, animated: true)
-        unitOfMeasurementSelector.selectedSegmentIndex = 1
+        unitOfMeasurementSelector.selectedSegmentIndex = 0
 
-        totalDistanceTraveledLabel.isHidden = true
         totalDistanceTraveledLabel.font = UIFont(name: "Avenir Heavy", size: 50)
         totalDistanceTraveledLabel.adjustsFontSizeToFitWidth = true
         totalDistanceTraveledLabel.textAlignment = .center
@@ -82,12 +114,54 @@ class MapViewController: UIViewController {
         startStopButtonStack.spacing = 15
         startStopButtonStack.distribution = .fillEqually
 
-        startRunButton.setTitle("START RUN", for: .normal)
         startRunButton.addTarget(self, action: #selector(startRunButtonTapped), for: .touchUpInside)
 
         endRunButton.setTitle("END RUN", for: .normal)
         endRunButton.addTarget(self, action: #selector(endRunButtonTapped), for: .touchUpInside)
         endRunButton.isEnabled = false
+    }
+
+    func configureLoadedUI() {
+        shareButton.isEnabled = false
+        totalDistanceTraveledLabel.isHidden = true
+        startRunButton.setTitle("START RUN", for: .normal)
+    }
+
+    func configureRunStartedUI() {
+        startRunButton.isEnabled = false
+        endRunButton.isEnabled = true
+        unitOfMeasurementStack.isHidden = true
+        totalDistanceTraveledLabel.isHidden = false
+    }
+
+    func configureRunEndedUI() {
+        startRunButton.setTitle("NEW RUN", for: .normal)
+        shareButton.isEnabled = true
+        endRunButton.isEnabled = false
+        startRunButton.isEnabled = true
+        totalDistanceTraveledLabel.text = "Nice! You ran \(viewModel.totalDistanceTravelled)"
+
+        // This block prevents the mapView from zooming in on an unexpected place
+        // when the run is ended before a polyline exists
+        if viewModel.userCoordinatesArray.count < 5 {
+            mapView.setCenter(locationService.currentUserCoordinates!, animated: true)
+        } else {
+            mapView.setVisibleMapRect(viewModel.mapViewPolyline.boundingMapRect,
+                                      edgePadding: UIEdgeInsets(top: 50,
+                                                                left: 50,
+                                                                bottom: infoView.frame.size.height,
+                                                                right: 50),
+                                      animated: true)
+        }
+    }
+
+    func configureErrorUI() {
+        let alertController = UIAlertController(title: "Error: Unable to Track Location",
+                                                message: "Enable location tracking in Settings and restart the app.",
+                                                preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default)
+        alertController.addAction(okAction)
+        present(alertController, animated: true)
     }
 
     func layoutViews() {
@@ -113,6 +187,11 @@ class MapViewController: UIViewController {
             mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
+            infoView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
+            infoView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15),
+            infoView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            infoView.heightAnchor.constraint(equalToConstant: 180),
+
             centerUserLocationButton.topAnchor.constraint(equalTo: infoView.topAnchor, constant: 5),
             centerUserLocationButton.leadingAnchor.constraint(equalTo: infoView.leadingAnchor),
 
@@ -133,13 +212,7 @@ class MapViewController: UIViewController {
 
             startStopButtonStack.topAnchor.constraint(equalTo: unitOfMeasurementStack.bottomAnchor, constant: 15),
             startStopButtonStack.leadingAnchor.constraint(equalTo: infoView.leadingAnchor, constant: 15),
-            startStopButtonStack.trailingAnchor.constraint(equalTo: infoView.trailingAnchor, constant: -15),
-
-            infoView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 15),
-            infoView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -15),
-            infoView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            infoView.heightAnchor.constraint(equalToConstant: 180)
-
+            startStopButtonStack.trailingAnchor.constraint(equalTo: infoView.trailingAnchor, constant: -15)
         ])
     }
 
@@ -161,37 +234,18 @@ class MapViewController: UIViewController {
     }
 
     @objc func startRunButtonTapped() {
+        state = .runStarted
         viewModel.startRun()
-        startRunButton.isEnabled = false
-        endRunButton.isEnabled = true
-        unitOfMeasurementStack.isHidden = true
-        totalDistanceTraveledLabel.isHidden = false
-        viewModel.userCoordinatesArray.removeAll()
-        viewModel.userLocationsArray.removeAll()
         mapView.removeOverlays(mapView.overlays)
     }
 
     @objc func endRunButtonTapped() {
+        state = .runEnded
         viewModel.endRun()
-        startRunButton.setTitle("NEW RUN", for: .normal)
-        shareButton.isEnabled = true
-        endRunButton.isEnabled = false
-        startRunButton.isEnabled = true
-        if viewModel.userCoordinatesArray.count < 5 {
-            mapView.setCenter(LocationService.instance.currentUserCoordinates!, animated: true)
-        } else {
-            mapView.setVisibleMapRect(viewModel.mapViewPolyline.boundingMapRect,
-                                      edgePadding: UIEdgeInsets(top: 50,
-                                                                left: 50,
-                                                                bottom: infoView.frame.size.height,
-                                                                right: 50),
-                                      animated: true)
-        }
-        totalDistanceTraveledLabel.text = "Nice! You ran \(viewModel.totalDistanceTravelled)"
     }
 
     @objc func centerUserLocationButtonTapped() {
-        viewModel.centerMapOnUserCoordinates(withCoordinates: LocationService.instance.currentUserCoordinates!)
+        viewModel.centerMapOnUserCoordinates(withCoordinates: locationService.currentUserCoordinates!)
     }
 
     @objc func shareButtonTapped() {
@@ -200,5 +254,22 @@ class MapViewController: UIViewController {
         guard let screenshot = screenshot.image else { return }
         let activityViewController = UIActivityViewController(activityItems: [screenshot], applicationActivities: nil)
         present(activityViewController, animated: true)
+    }
+}
+
+extension MapViewController: UserApprovedLocationTrackingDelegate {
+    func userApprovedLocationTracking() {
+        configurePersistentViewProperties()
+        state = .loaded
+        layoutViews()
+        viewModel.showUserLocationOnMap()
+        configureSubscribers()
+    }
+}
+
+extension MapViewController: UserDeniedLocationTrackingDelegate {
+    func presentLocationTrackingFailedError(withError error: Error) {
+        print("ERROR: \(error.localizedDescription)")
+        state = .error
     }
 }
